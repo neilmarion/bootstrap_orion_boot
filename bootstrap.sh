@@ -14,15 +14,9 @@ function start {
   for i in $apps
   do
     tmux new-window -t my_server:$x -n ${app_nicknames[x-2]}
-    tmux send-keys -t my_server:$x "cd /vagrant/$i; git checkout master; git pull origin master; bundle; rails s -p ${ports[x-2]}" C-m
-    x=$((x+1))
-  done
-
-  x=2
-  for i in $apps
-  do
-    tmux new-window -t my_server:$((x+no_of_apps)) -n "${app_nicknames[x-2]} sk"
-    tmux send-keys -t my_server:$((x+no_of_apps)) "cd /vagrant/$i; bundle exec sidekiq" C-m
+    tmux send-keys -t my_server:$x "cd /vagrant/$i; git checkout master; git pull origin master; rake db:migrate; bundle; rails s -p ${ports[x-2]}" C-m
+    tmux split-window -h
+    tmux send-keys -t my_server:$x "cd /vagrant/$i; bundle exec sidekiq" C-m
     x=$((x+1))
   done
 
@@ -43,9 +37,20 @@ function stop {
   done
 }
 
+function restart {
+  tmux detach
+  sleep 1
+  stop
+  sleep 1
+  start
+}
+
 if [ $1 == "start" ]
 then
   start
+elif [ $1 == "restart" ]
+then
+  restart
 elif [ $1 == "stop" ]
 then
   stop
