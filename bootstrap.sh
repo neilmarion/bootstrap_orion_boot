@@ -14,7 +14,12 @@ function start {
   for i in $apps
   do
     tmux new-window -t my_server:$x -n ${app_nicknames[x-2]}
-    tmux send-keys -t my_server:$x "cd /vagrant/$i; git checkout master; git pull origin master; rake db:migrate; bundle; rails s -p ${ports[x-2]}" C-m
+    if [$2 == "master"]
+    then
+      tmux send-keys -t my_server:$x "cd /vagrant/$i; git checkout master; git pull origin master; rake db:migrate; bundle; rails s -p ${ports[x-2]}" C-m
+    else
+      tmux send-keys -t my_server:$x "cd /vagrant/$i; rake db:migrate; bundle; rails s -p ${ports[x-2]}" C-m
+    fi
     tmux split-window -h
     tmux send-keys -t my_server:$x "cd /vagrant/$i; bundle exec sidekiq" C-m
     x=$((x+1))

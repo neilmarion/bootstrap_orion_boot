@@ -7,10 +7,16 @@ Run all Orion apps with one shell script where app servers and sidekiq servers a
 
 ## Usage ##
 
-1. Start
+### Start ###
+
+#### Checkout master branch ####
+
+``./bootstrap.sh start master``
+
+#### Do not checkout master branch ####
 
 ``./bootstrap.sh start``
 
-2. Stop - kill all Orion apps
+### Stop - kill all Orion apps ###
 
 ``./bootstrap.sh stop``
